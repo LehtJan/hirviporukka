@@ -1,7 +1,6 @@
-# TEST THE CONNECTION TO POSTGRESQL SERVER ON LOCALHOST
+# GET COLUMN NAMES FROM A TABLE
 
 # LIBRARIES AND MODULES
-from logging import exception
 import psycopg2  # For PostgreSQL
 
 # Propetries of the connection string
@@ -23,8 +22,17 @@ try:
     # Execute a SQL command to get hunters (jasen)
     command = "SELECT * FROM public.jasen;"
     cursor.execute(command)
-    result_set = cursor.fetchall()
-    print("Jäsentiedot ovat:", result_set)
+
+    # Get number of rows in the result set
+    rows = cursor.rowcount
+    print("Tulosjoukossa on", rows, "riviä")
+    # Get column names from cursor
+    column_names =  [column_name[0] for column_name in cursor.description]
+    print("Sarakkeiden nimet ovat:")
+    for column in column_names:
+        print(column)
+    print("Sarakeluettelo päättyi")
+    
 
 # Throw an error if connection or cursor creation fails    
 except (Exception, psycopg2.Error) as e:

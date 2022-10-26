@@ -1,4 +1,4 @@
-# TEST THE CONNECTION TO POSTGRESQL SERVER ON LOCALHOST
+# TEST A SQL FUNCTION
 
 # LIBRARIES AND MODULES
 import psycopg2  # For PostgreSQL
@@ -16,11 +16,15 @@ try:
     dbaseconnection = psycopg2.connect(database=database, user=user, password=password,
                                        host=host, port=port)
 
-    # Create a cursor to execute commands and retrieve result set
+    # Create a cursor to execute commands and retrieve the result set
     cursor = dbaseconnection.cursor()
-    cursor.execute("SELECT version();") # Executes version function on PG server and store result
-    version_number = cursor.fetchone() # Read result from cursor (1 row)
-    print("PostgreSQL:n versionumero on ", version_number)
+    
+    # Execute a SQL SELECT command to get results from a function
+    command = "SELECT * FROM public.get_member(2) ;"
+    cursor.execute(command)
+
+    person_data = cursor.fetchone()
+    print(person_data)
 
 # Throw an error if connection or cursor creation fails    
 except (Exception, psycopg2.Error) as e:
