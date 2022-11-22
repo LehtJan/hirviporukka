@@ -3,8 +3,8 @@
 
 # LIBRARIES AND MODULES
 # ---------------------
-import pgModule
-# from PyQt5.QtWidgets import * # Remove this line when ready
+# import pgModule
+# from PyQt5.QtWidgets import *  Remove this line when ready
 from PyQt5.QtWidgets import QTableWidgetItem  # For handling a single table cell
 
 '''
@@ -13,22 +13,23 @@ resultObject = pgModule.DatabaseOperation()
 testConnectionArgs = resultObject.readDatabaseSettingsFromFile('settings.dat')
 resultObject.getAllRowsFromTable(
     testConnectionArgs, 'public.jakoryhma_yhteenveto')
-
 tableWidget = QTableWidget()
 '''
 
 # DATA PREPARATION FUNCTIONS
-# --------------------------
+# ---------------------------
+
 
 def prepareTable(resultObject, tableWidget):
-    """Updates an existing TableWidget using an instance of DatabaseOperation class 
+    """Updates an existing table widget using an instance of DatabaseOperation class 
     defined in the pgModule
-
     Args:
         resultObject (DatabaseOperation): Instance of DatabaseOperation class -> errors and results
-        tableWidget (QTableWidget): 
+        tableWidget (QTableWidget): Table widget to be updated
     """
-    
+    # Clear table widget before populating it
+    tableWidget.clear()
+
     # If there is no error start processing rows and columns of the result set
     if resultObject.errorCode == 0:
         tableWidget.setRowCount(resultObject.rows)
@@ -36,7 +37,6 @@ def prepareTable(resultObject, tableWidget):
         tableWidget.setHorizontalHeaderLabels(resultObject.columnHeaders)
 
         rowIndex = 0 # Initialize row index
-
         for tupleIx in resultObject.resultSet: # Cycle through list of tuples
             columnIndex = 0 # Init column index
 
@@ -45,30 +45,31 @@ def prepareTable(resultObject, tableWidget):
                 tableWidget.setItem(rowIndex, columnIndex, cellData) # Set cell
 
                 columnIndex +=1
-            
-            rowIndex += 1
+
+            rowIndex += 1        
 
 def prepareComboBox(resultObject, comboBox, ixToShow, ixToReturn):
-    """_summary_
-    
+    """Prepares data to be shown in a combo box
     Args:
         resultObject (DatabaseOperation): Instance of DatabaseOperation class -> errors and results
-        comboBox (QComboBox): ComboBox to be updated
-        ixToShow (int) : Index of the column to show in the comboBox
-        ixToReturn (int) : Index of the column containing values of interest
-
+        comboBox (QComboBox): Combo box to be updated
+        ixToShow (int): Index of the column to show in the combo box
+        ixToReturn (int): Index of the column containing values of interest
     Returns:
         list: Value of interest
-    """  
+    """
+    # Clear combo box before populating it
+    comboBox.clear()
+
     # Result set is a list of tuples even when there is only one column in the view
     cBValuesOfInterest = [] # Empty list for values of interest
     cBItems = []  # Empty list for choices in the combo box
 
-    for result in resultObject.resultset:
+    for result in resultObject.resultSet:
         cBValueOfInterest = result[ixToReturn] # Choose column to use as value of interest
-        resultAsString = str(result[ixToShow]) # Convert the element to show in the tuple as a string
-        cBItems.append(resultAsString) # Append it to the choices list of the comboBox
+        resultAsString = str(result[ixToShow]) # Convert element to show in the tuple as a string
+        cBItems.append(resultAsString) # Append it to the choices list of the combo box
         cBValuesOfInterest.append(cBValueOfInterest) # Append the value to the list
-
-    comboBox.addItems(cBItems) # Populate the comboBox
+    
+    comboBox.addItems(cBItems) # Populate the combo box
     return cBValuesOfInterest

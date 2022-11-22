@@ -53,7 +53,7 @@ class DatabaseOperation():
         """Saves connection arguments to JSON based settings file
         Args:
             file (str): Name of the JSON settings file
-            connectionArgs (dict): Connection arguments in key-value-pairs
+            connectionArgs (dict): Connection arguments in key-value pairs
         """
         settingsFile = open(file, 'w')
         json.dump(connectionArgs, settingsFile)
@@ -76,7 +76,7 @@ class DatabaseOperation():
     def getAllRowsFromTable(self, connectionArgs, table):
         """Selects all rows from the table
         Args:
-            connectionArgs (dict): Connection arguments in key-value-pairs
+            connectionArgs (dict): Connection arguments in key-value pairs
             table (str): Name of the table to read from
         """
         server = connectionArgs['server']
@@ -130,7 +130,40 @@ class DatabaseOperation():
             sqlClause (str): Insert clause
         """
 
-        pass
+        server = connectionArgs['server']
+        port = connectionArgs['port']
+        database = connectionArgs['database']
+        user = connectionArgs['user']
+        password = connectionArgs['password']
+
+        try:
+            # Connect to the database and set error parameters
+            dbconnection = psycopg2.connect(
+                database=database, user=user, password=password, host=server, port=port)
+            self.errorCode = 0
+            self.errorMessage = 'Yhdistettiin tietokantaan'
+            self.detailedMessage = 'Connected to database successfully'
+
+            # Create a cursor to retrieve data from the table
+            with dbconnection.cursor() as cursor:
+                cursor.execute(sqlClause)
+
+                # Set error values
+                self.errorCode = 0
+                self.errorMessage = 'Lisättiin tietue onnistuneesti'
+                self.detailedMessage = 'Inserting into table was successful'
+                dbconnection.commit()
+                
+        except (Exception, psycopg2.Error )as error:
+
+            # Set error values 
+            self.errorCode = 1 # TODO: Design a set of error codes to use with this module
+            self.errorMessage = 'Tietokannan käsittely ei onnistunut'
+            self.detailedMessage = str(error)
+
+        finally:
+            if self.errorCode == 0:
+                dbconnection.close()
 
     # Method to update a table
     def updateTable(self, connectionArgs, table, column, limit):
@@ -161,10 +194,6 @@ if __name__ == "__main__":
     # Create a dictionary for connection settings using defaults
     dictionary = testOperation.createConnectionArgumentDict(
         'metsastys', 'sovellus', 'Q2werty')
-    '''
-    print(dictionary)
-    '''
-    # FIXME: Correct the line above
     
     # Save those settings to file
     testOperation.saveDatabaseSettingsToFile('settings.dat', dictionary)
