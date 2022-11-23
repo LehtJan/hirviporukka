@@ -275,7 +275,7 @@ class Ui_MainWindow(object):
         self.shotByLabel_2.setText(_translate("MainWindow", "Eläin"))
         self.shotByLabel_3.setText(_translate("MainWindow", "Ikäryhmä"))
         self.shotByLabel_4.setText(_translate("MainWindow", "Sukupuoli"))
-        self.shotByLabel_5.setText(_translate("MainWindow", "Paino"))
+        self.shotByLabel_5.setText(_translate("MainWindow", "Paino (kg)"))
         self.shotByLabel_6.setText(_translate("MainWindow", "Käyttö"))
         self.additionalInfoTextEdit.setToolTip(_translate("MainWindow", "Tähän vieraan kaatajan nimi tai havaintoja eläimestä"))
         self.shotByLabel_7.setText(_translate("MainWindow", "Lisätietoja"))
